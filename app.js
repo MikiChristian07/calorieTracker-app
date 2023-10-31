@@ -4,17 +4,17 @@
 const itemCtrl = (function(){
     // Item Constructor
     const item = function(id, name, calories){
-        this.id = id;
-        this.name = name;
-        this.calories = calories;
+        // this.id = id;
+        // this.name = name;
+        // this.calories = calories;
     }
 
     // Data structure / State
     const data = {
         items: [
-            {id: 0, name: 'Steak Dinner', calories: 1200},
-            {id: 1, name: 'Cookies', calories: 400},
-            {id: 2, name: 'Eggs', calories: 300}
+            // {id: 0, name: 'Steak Dinner', calories: 1200},
+            // {id: 1, name: 'Cookies', calories: 400},
+            // {id: 2, name: 'Eggs', calories: 300}
         ],
         currItem: null,
         totalCalories: 0,
@@ -25,7 +25,7 @@ const itemCtrl = (function(){
         getItems: function(){
             return data.items;
         },
-        addItem: function(name, calories){
+        addListItem: function(name, calories){
             // Create item ID
             let ID = 0
 
@@ -39,7 +39,7 @@ const itemCtrl = (function(){
            calories  = parseInt(calories);
 
            // Create new item
-           newItem = new Item(ID, name, calories);
+           newItem = new item(ID, name, calories);
 
            // Add to items array
            data.items.push(newItem);
@@ -89,6 +89,32 @@ const uiCtrl = (function(){
                 calories: document.querySelector(UISelectors.itemCalories).value
             }
         },
+        addListItem: function(item){
+            // show the list
+            document.querySelector(UISelectors.itemList).style.display = 'block';
+            // Create li element
+            const li = document.createElement('li');
+            // Add Class
+            li.className = 'collection-item';
+            // Add ID
+            li.id = `${item.id}`;
+            // Add HTML
+            li.innerHTML = `
+                <strong>${item.name}: </strong><em>${item.calories}</em>
+                <a href="#" class="secondary-content">
+                    <i class="edit-item fa fa-pencil"></i>
+                </a>
+            `;
+            // Insert item
+            document.querySelector(UISelectors.itemList).insertAdjacentElement('beforeend',li);
+        },
+        clearInput: function(){
+            document.querySelector(UISelectors.itemName).value = '';
+            document.querySelector(UISelectors.itemCalories).value = '';
+        },
+        hideList: function(){
+            document.querySelector(UISelectors.itemList).style.display='none';
+        },
         getSelectors: function(){
             return UISelectors;
         }
@@ -119,7 +145,13 @@ const app = (function(itemCtrl, uiCtrl){
         // Validate name and value input
         if (input.name !== '' && input.calories !== ''){
             // Add item 
-            const newItem = itemCtrl.addItem(input.name, input.calories);
+            const newItem = itemCtrl.addListItem(input.name, input.calories);
+
+            // Add item to UI list
+            uiCtrl.addListItem(newItem);
+
+            // Clear Input Field
+            uiCtrl.clearInput();
         }
 
         e.preventDefault();
@@ -131,8 +163,15 @@ const app = (function(itemCtrl, uiCtrl){
             // Fetch items from data structure
             const items = itemCtrl.getItems();
 
-            // Populate list with item
-           uiCtrl.populateItemList(items);
+            // Check if any items
+            if(items.length == 0){
+                uiCtrl.hideList();
+            } else {
+
+            }
+
+              // Populate list with item
+              uiCtrl.populateItemList(items);
 
            // Load event listeners
            loadEventListners( );
@@ -140,5 +179,5 @@ const app = (function(itemCtrl, uiCtrl){
     }
 })(itemCtrl, uiCtrl);
 
-
+// Initialize App
 app.init();
